@@ -19,6 +19,7 @@ Packets are uploaded by sending them attached to the "process" command, followin
 I'm sure it would be possible to parse these packets in a better way than I am doing, but this is the system I came up with.
 
 Additional discord server settings required:
+
 	- In order for the bot to accept packet uploads, they must be done by someone with a role called "trusted uploader"
 	- The channels used for competitive slowbowl are by default "slowbowl-1" and "slowbowl-2"
 
