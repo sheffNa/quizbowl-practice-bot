@@ -8,7 +8,10 @@ from pdfminer3.pdfinterp import PDFPageInterpreter
 from pdfminer3.converter import PDFPageAggregator
 from pdfminer3.converter import TextConverter
 import os
-token = "NzM3MzQ1NzI3ODg5NjcwMjk2.Xx8AuA.6ZgFK64u8qe7YFK8ZoiqstUKjqc"
+
+token_file = open("token.txt", "r")
+token = token_file.read()
+token_file.close()
 score1 = 0
 score2 = 0
 on_question = [0,0]
