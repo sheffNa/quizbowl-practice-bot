@@ -303,13 +303,14 @@ async def on_message(message):
                                 paragraphs.pop(0)
 
                             #Now we have to handle the bonuses. First, we have to get to the first bonus. Because otherwise we cannot tell bonuses and extra tossups apart, we're going to assume all bonus leadins include "for ten points each" or "ftpe".
-                            while not (" points each" in paragraphs[0].lower() or "ftpe" in paragraphs[0].lower()):
+                            while not ((("10" in paragraphs[1].lower() or "ten" in paragraphs[1].lower()) and "points" in paragraphs[1].lower() and ("each:" in paragraphs[1].lower() or  "each," in paragraphs[1].lower())) or "ftpe" in paragraphs[1].lower()):
                                 paragraphs.pop(0)
+
                             #Now we've reached the bonuses. Each bonus has 7 parts, but they're not always subdivided right. So, we do it ourselves.
                             question_number = 1
                             while question_number <= 20:
                                 if question_number != 20:
-                                    while not ((("10" in paragraphs[1].lower() or "ten" in paragraphs[1].lower()) and "points" in paragraphs[1].lower() and "each" in paragraphs[1].lower()) or "ftpe" in paragraphs[1].lower()):
+                                    while not ((("10" in paragraphs[1].lower() or "ten" in paragraphs[1].lower()) and "points" in paragraphs[1].lower() and ("each:" in paragraphs[1].lower() or  "each," in paragraphs[1].lower())) or "ftpe" in paragraphs[1].lower()):
                                         paragraphs[0] = paragraphs[0] + paragraphs [1]
                                         paragraphs.pop(1)
                                 else:
