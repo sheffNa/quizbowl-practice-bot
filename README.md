@@ -13,7 +13,7 @@ Packets are uploaded by sending them attached to the "process" command, followin
 	- Questions must be separated from each other by at least one empty (whitespace permitted) line
 	- All answers to tossups and bonuses must begin with "ANSWER:" (in all caps)
 	- No non-whitespace text is permitted between the end of a tossup and the start of its answer
-	- Bonus leadins must contain "for ten points each", "for 10 points each" or "ftpe"
+	- Bonus leadins must contain either "ftpe" or the words "ten"/"10", "points" and "each:/each,"
 	- Issues may occur when tossups after 20 exist and contain all those words
 	- Bonus parts must begin with "[10]"
 I'm sure it would be possible to parse these packets in a better way than I am doing, but this is the system I came up with.
