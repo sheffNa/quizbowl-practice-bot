@@ -51,25 +51,25 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    #respond to messages beginning with "<"
+    #respond to messages beginning with "!"
     text = message.content.lower()
-    if text[0] == "<":
+    if text[0] == "!":
         args = text.split()
 
         #handle entry into different modes
         if current_action == "waiting":
 
             #enter scorekeeping mode
-            if args[0] == "<scorekeep":
+            if args[0] == "!scorekeep":
                 print("entering scorekeeping mode")
                 score1 = 0
                 score2 = 0
-                await message.channel.send("Ok, beginning scorekeeping! Use \"<team1 x\" to add x points to team 1, \"<team2 x\" to add x points to team 2, and \"<end\" to end the game")
+                await message.channel.send("Ok, beginning scorekeeping! Use \"!team1 x\" to add x points to team 1, \"!team2 x\" to add x points to team 2, and \"!end\" to end the game")
                 current_action = "scorekeeping"
                 await client.change_presence(status=discord.Status.online, activity=discord.Game(name="quizbowl (ok, not really, just keeping score - but i like to think it counts as playing!)"))
 
             #enter bonus mode
-            elif args[0] == "<bonus":
+            elif args[0] == "!bonus":
                 if len(args) == 1:
                     await message.channel.send("You haven't specified a packet, so I'll be reading from \"default\"")
                     packet = "default"
@@ -78,9 +78,9 @@ async def on_message(message):
                         packet = args[1]
                         await message.channel.send("Found packet " + packet)
                     else:
-                        await message.channel.send("No packet \"" + args[1] + "\" detected. To see all available packets, run \"<list\"")
+                        await message.channel.send("No packet \"" + args[1] + "\" detected. To see all available packets, run \"!list\"")
                         return
-                await message.channel.send("Alright, lets read some bonuses! To guess \"answer\", type \"<guess answer\", and to end the reading before the packet has been fully read, type \"<end\"")
+                await message.channel.send("Alright, lets read some bonuses! To guess \"answer\", type \"!guess answer\", and to end the reading before the packet has been fully read, type \"!end\"")
                 await client.change_presence(status=discord.Status.online, activity=discord.Game(name="bonuses"))
                 current_action = "reading bonuses"
                 print("entering bonus mode")
@@ -99,11 +99,11 @@ async def on_message(message):
 
 
             #Prompt on partial command
-            elif args[0] == "<slowbowl":
-                await message.channel.send("Please use either \"<slowbowl_cooperative\" or \"<slowbowl_teams\"")
+            elif args[0] == "!slowbowl":
+                await message.channel.send("Please use either \"!slowbowl_cooperative\" or \"!slowbowl_teams\"")
 
             #enter cooperative slowbowl mode
-            elif args[0] == "<slowbowl_cooperative":
+            elif args[0] == "!slowbowl_cooperative":
                 if len(args) == 1:
                     await message.channel.send("You haven't specified a packet, so I'll be reading from \"default\"")
                     packet = "default"
@@ -112,13 +112,13 @@ async def on_message(message):
                         packet = args[1]
                         await message.channel.send("Found packet " + packet)
                     else:
-                        await message.channel.send("No packet \"" + args[1] + "\" detected. To see all available packets, run \"<list\".")
+                        await message.channel.send("No packet \"" + args[1] + "\" detected. To see all available packets, run \"!list\".")
                         return
                 score1 = 0
                 score2 = 0
                 for i in range(1, 21):
                     score2 += len(os.listdir("packets/" + packet + "/tossups/" + str(i)))
-                await message.channel.send("To hear the next part, type \"<next\", to buzz \"answer\", type \"<guess answer\", and to end the reading before the packet has been fully read, type \"<end\". I will be keeping score for you against the packet. The maximum number of points possible in this packet are " + str(score2))
+                await message.channel.send("To hear the next part, type \"!next\", to buzz \"answer\", type \"!guess answer\", and to end the reading before the packet has been fully read, type \"!end\". I will be keeping score for you against the packet. The maximum number of points possible in this packet are " + str(score2))
                 await message.channel.send("You gain 2 points for getting a tossup right, plus 1 point for every clue remaining in the question after the point you get it. Count promptable answers as right unless you're pretty sure you wouldn't have converted it.")
                 await client.change_presence(status=discord.Status.online, activity=discord.Game(name="slowbowl"))
                 current_action = "cooperative slowbowl"
@@ -132,7 +132,7 @@ async def on_message(message):
                 await message.channel.send(text)
 
             #enter competitive slowbowl mode
-            elif args[0] == "<slowbowl_teams" or args[0] == "<slowbowl_competitive":
+            elif args[0] == "!slowbowl_teams" or args[0] == "!slowbowl_competitive":
                 if len(args) == 1:
                     await message.channel.send("You haven't specified a packet, so I'll be reading from \"default\"")
                     packet = "default"
@@ -141,7 +141,7 @@ async def on_message(message):
                         packet = args[1]
                         await message.channel.send("Found packet " + packet)
                     else:
-                        await message.channel.send("No packet \"" + args[1] + "\" detected. To see all available packets, run \"<list\".")
+                        await message.channel.send("No packet \"" + args[1] + "\" detected. To see all available packets, run \"!list\".")
                         return
                 score1 = 0
                 score2 = 0
@@ -156,8 +156,8 @@ async def on_message(message):
                 channel2 = discord.utils.get(message.channel.guild.text_channels, name="slowbowl-2")
                 await channel1.send("Greetings, competitors. Your mission here is to completely destroy team 2. You may have known the people on team 2 once - you may even have considered them your friends. All that is gone. Now they are nothing but your opponents. They would obliterate you at the slightest hint of weakness, and so you must be prepared to do the same.")
                 await channel2.send("Greetings, competitors. Your mission here is to completely destroy team 1. You may have known the people on team 1 once - you may even have considered them your friends. All that is gone. Now they are nothing but your opponents. They would obliterate you at the slightest hint of weakness, and so you must be prepared to do the same.")
-                await channel1.send("The game works as follows: Both teams will be send a line of a tossup. The teams can take as long as they like to try and figure out the answer. They, they can either type \"<guess [answer]\" to submit the guess [answer] or \"<next\" to decline answering on that clue and wait for the next clue. Once both teams have made their decision, the game will proceed. If neither team has made a guess, both will be given the next part of the question and the process will continue. If one team has guessed correctly and the other has not, that team will get 2 points. If one team has guessed incorrectly, they will get 0 points and the other team will get 2 points. If both teams guess right, they both get 1 point, and if both guess wrong they both get 0 points. If one team cannot continue the game, they can type \"<surrender\" to end the game. Propmts are by default counted as incorrect, unless in your answer you specified \"guess [answer], [second_answer] if prompted\"")
-                await channel2.send("The game works as follows: Both teams will be send a line of a tossup. The teams can take as long as they like to try and figure out the answer. They, they can either type \"<guess [answer]\" to submit the guess [answer] or \"<next\" to decline answering on that clue and wait for the next clue. Once both teams have made their decision, the game will proceed. If neither team has made a guess, both will be given the next part of the question and the process will continue. If one team has guessed correctly and the other has not, that team will get 2 points. If one team has guessed incorrectly, they will get 0 points and the other team will get 2 points. If both teams guess right, they both get 1 point, and if both guess wrong they both get 0 points. If one team cannot continue the game, they can type \"<surrender\" to end the game. Propmts are by default counted as incorrect, unless in your answer you specified \"guess [answer], [second_answer] if prompted\"")
+                await channel1.send("The game works as follows: Both teams will be send a line of a tossup. The teams can take as long as they like to try and figure out the answer. They, they can either type \"!guess [answer]\" to submit the guess [answer] or \"!next\" to decline answering on that clue and wait for the next clue. Once both teams have made their decision, the game will proceed. If neither team has made a guess, both will be given the next part of the question and the process will continue. If one team has guessed correctly and the other has not, that team will get 2 points. If one team has guessed incorrectly, they will get 0 points and the other team will get 2 points. If both teams guess right, they both get 1 point, and if both guess wrong they both get 0 points. If one team cannot continue the game, they can type \"!surrender\" to end the game. Propmts are by default counted as incorrect, unless in your answer you specified \"guess [answer], [second_answer] if prompted\"")
+                await channel2.send("The game works as follows: Both teams will be send a line of a tossup. The teams can take as long as they like to try and figure out the answer. They, they can either type \"!guess [answer]\" to submit the guess [answer] or \"!next\" to decline answering on that clue and wait for the next clue. Once both teams have made their decision, the game will proceed. If neither team has made a guess, both will be given the next part of the question and the process will continue. If one team has guessed correctly and the other has not, that team will get 2 points. If one team has guessed incorrectly, they will get 0 points and the other team will get 2 points. If both teams guess right, they both get 1 point, and if both guess wrong they both get 0 points. If one team cannot continue the game, they can type \"!surrender\" to end the game. Propmts are by default counted as incorrect, unless in your answer you specified \"guess [answer], [second_answer] if prompted\"")
                 await channel1.send("We begin!")
                 await channel2.send("We begin!")
                 on_question = [1, 0]
@@ -169,14 +169,14 @@ async def on_message(message):
                 await channel2.send(text)
 
             #list all uploaded packets
-            elif args[0] == "<list":
+            elif args[0] == "!list":
                 await message.channel.send("------packet list------")
                 for packet in os.listdir("packets"):
                     await message.channel.send(packet)
                 await message.channel.send("------end of list------")
 
             #enter process mode
-            elif args[0] == "<process":
+            elif args[0] == "!process":
                 #Ensure that the person issuing the command has been designated as trustworthy. This can be a dangerous command to let anyone use.
                 trusted = 0
                 for role in message.author.roles:
@@ -291,7 +291,7 @@ async def on_message(message):
                                     f = open(cur_path + "answer", "w")
                                     f.write(paragraphs[1])
                                     f.close()
-                                    clues = paragraphs[0].split(". ")
+                                    clues = re.split('\. |\." ', paragraphs[0])
                                     #remove all empty clues
                                     clues = [j for j in clues if re.search('[a-zA-Z]', j)]
                                     for j in range(len(clues)):
@@ -355,17 +355,17 @@ async def on_message(message):
                         current_action = "waiting"
                         print("waiting...")
 
-            elif args[0] == "<help" or args[0] == "<?":
-                await message.channel.send("Hello! I'm Quizbowl Practice Bot! Here's a list of things I can do! \n - \"<scorekeep\" tells me to keep a running total of two teams' scores \n - \"<process [name]\" with a packet attached in a docx, txt or pdf file will parse and save that file under the name [name]. (note: this function only available for people with the \"trusted uploader\" role) \n - \"<bonus [packet]\" tells me to read through the packet named [packet], assuming its been uploaded \n - \"<slowbowl_cooperative [packet]\" will tell me to read the packet named [packet] for a single team game of slowbowl \n - \"slowbowl_competitive [packet]\" will have me read two team slowbowl")
+            elif args[0] == "!help" or args[0] == "!?":
+                await message.channel.send("Hello! I'm Quizbowl Practice Bot! Here's a list of things I can do! \n - \"!scorekeep\" tells me to keep a running total of two teams' scores \n - \"!process [name]\" with a packet attached in a docx, txt or pdf file will parse and save that file under the name [name]. (note: this function only available for people with the \"trusted uploader\" role) \n - \"!bonus [packet]\" tells me to read through the packet named [packet], assuming its been uploaded \n - \"!slowbowl_cooperative [packet]\" will tell me to read the packet named [packet] for a single team game of slowbowl \n - \"slowbowl_competitive [packet]\" will have me read two team slowbowl")
 
             else:
-                await message.channel.send("I'm sorry, I don't understand the command \"" + args[0] + "\". If you want to see a list of all valid commands, try \"<help\"")
+                await message.channel.send("I'm sorry, I don't understand the command \"" + args[0] + "\". If you want to see a list of all valid commands, try \"!help\"")
 
         #handle scorekeeping
         elif current_action == "scorekeeping":
 
             #add points to team 1
-            if args[0] == "<team1":
+            if args[0] == "!team1":
                 print("Adding " + args[1] + " to team 1's score")
                 score1 += int(args[1])
                 if score1 == score2:
@@ -379,7 +379,7 @@ async def on_message(message):
                         await message.channel.send("Team 1 is losing " + str(score1) + " to " + str(score2) + ". Maybe they should try not negging? idk just a suggestion what do I know I'm just your bot you don't have to listen to me")
 
             #add points to team 2
-            if args[0] == "<team2":
+            if args[0] == "!team2":
                 print("Adding " + args[1] + " to team 2's score")
                 score2 += int(args[1])
                 if score2 == score1:
@@ -393,7 +393,7 @@ async def on_message(message):
                         await message.channel.send("Team 2 is losing " + str(score1) + " to " + str(score2) + ". Maybe they should try not negging? idk just a suggestion what do I know I'm just your bot you don't have to listen to me")
 
             #end the scorekeeping
-            if args[0] == "<end":
+            if args[0] == "!end":
                 print("Ending scorekeeping")
                 if score1==score2:
                     await message.channel.send("Ooooh, ending on a tie, are we? Couldn't be bothered to do a tiebreaker? Alright, I guess we're *all* losers! I hope you're happy!")
@@ -415,7 +415,7 @@ async def on_message(message):
         elif current_action == "reading bonuses":
 
             #read the next bonus
-            if args[0] == "<guess":
+            if args[0] == "!guess":
                 print("Guess recieved")
                 print("reading bonus answer")
                 f = open("packets/" + packet + "/bonuses/" + str(on_question[0]) + "/answer" + str(on_question[1]), "r")
@@ -446,7 +446,7 @@ async def on_message(message):
                     await message.channel.send(text)
 
             #end the reading prematurely
-            if args[0] == "<end":
+            if args[0] == "!end":
                 print("ending bonus reading")
                 await client.change_presence(status=discord.Status.idle)
                 current_action="waiting"
@@ -457,7 +457,7 @@ async def on_message(message):
         #handle coop slowbowl
         elif current_action == "cooperative slowbowl":
 
-            if args[0] == "<next":
+            if args[0] == "!next":
                 if os.path.exists("packets/" + packet + "/tossups/" + str(on_question[0]) + "/clue" + str(on_question[1]+1)):
                     on_question[1] += 1
                     f = open("packets/" + packet + "/tossups/" + str(on_question[0]) + "/clue" + str(on_question[1]), "r")
@@ -467,7 +467,7 @@ async def on_message(message):
                 else:
                     await message.channel.send("This is the end of the question. If you really have no idea, just guess Smith I suppose")
 
-            elif args[0] == "<guess":
+            elif args[0] == "!guess":
                 f = open("packets/" + packet + "/tossups/" + str(on_question[0]) + "/answer", "r")
                 text = f.read()
                 f.close
@@ -498,7 +498,7 @@ async def on_message(message):
                     f.close()
                     await message.channel.send(text)
 
-            elif args[0] == "<end":
+            elif args[0] == "!end":
                 print("ending slowbowl")
                 await client.change_presence(status=discord.Status.idle)
                 current_action="waiting"
@@ -517,7 +517,7 @@ async def on_message(message):
                 await message.channel.send("Sorry, I'm running competitive slowbowl right now and so cannot respond to messages outside of the slowbowl channels.")
                 return
 
-            if args[0] == "<next":
+            if args[0] == "!next":
                 if team == 1:
                     if slowbowl_teamstates[0] == "waiting":
                         await message.channel.send("Action confirmed")
@@ -546,7 +546,7 @@ async def on_message(message):
                     else:
                         await message.channel.send("You have already confirmed an action")
 
-            elif args[0] == "<guess":
+            elif args[0] == "!guess":
                 if team == 1:
                     if slowbowl_teamstates[0] == "waiting":
                         slowbowl_teamstates[0] = "checking"
@@ -603,7 +603,7 @@ async def on_message(message):
                     else:
                         await message.channel.send("You have already confirmed an action")
 
-            elif args[0] == "<surrender":
+            elif args[0] == "!surrender":
                 await message.channel.send("You make a tactical retreat. Lose the battle, win the war. They won't be ready for you next time...")
                 if team == 1:
                     await discord.utils.get(message.channel.guild.text_channels, name="slowbowl-2").send("Team 1 has surrendered. You are victorious!")
@@ -711,8 +711,7 @@ async def next(ch1, ch2):
     global score2
     global current_action
     on_question[1] = 0
-    print("breakpoint 1")
-    if on_question[0] == 2:
+    if on_question[0] == 20:
         await ch1.send("The game has finished! The final score was " + str(score1) + " to " + str(score2) + "!")
         await ch2.send("The game has finished! The final score was " + str(score1) + " to " + str(score2) + "!")
         if score1 == score2:
@@ -733,14 +732,11 @@ async def next(ch1, ch2):
         score1 = 0
         score2 = 0
     else:
-        print("breakpoint 2")
         on_question[0] += 1
         slowbowl_teamstates = ["waiting", "waiting"]
-        print("breakpoint 3")
         f = open("packets/" + packet + "/tossups/" + str(on_question[0]) + "/clue0")
         text = f.read()
         f.close
-        print("breakpoint 4")
         await ch1.send(text)
         await ch2.send(text)
 
